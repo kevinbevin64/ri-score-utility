@@ -1,66 +1,38 @@
-# import sqlite3
-
-# conn = sqlite3.connect('test_database') 
-# c = conn.cursor()
-
-# c.execute('''
-#           CREATE TABLE IF NOT EXISTS products
-#           ([product_id] INTEGER PRIMARY KEY, [product_name] TEXT)
-#           ''')
-          
-# c.execute('''
-#           CREATE TABLE IF NOT EXISTS prices
-#           ([product_id] INTEGER PRIMARY KEY, [price] INTEGER)
-#           ''')
-                     
-# conn.commit()
-
-
-
-# import sqlite3
-
-# conn = sqlite3.connect('test_database') 
-# c = conn.cursor()
-                   
-# c.execute('''
-#           INSERT INTO products (product_id, product_name)
-
-#                 VALUES
-#                 (1,'Computer'),
-#                 (2,'Printer'),
-#                 (3,'Tablet'),
-#                 (4,'Desk'),
-#                 (5,'Chair')
-#           ''')
-
-# c.execute('''
-#           INSERT INTO prices (product_id, price)
-
-#                 VALUES
-#                 (1,800),
-#                 (2,200),
-#                 (3,300),
-#                 (4,450),
-#                 (5,150)
-#           ''')
-
-# conn.commit()
-
-
-
 import sqlite3
-import pandas as pd
 
-conn = sqlite3.connect('test_database') 
-c = conn.cursor()
-                   
-c.execute('''
-          SELECT
-          a.product_name,
-          b.price
-          FROM products a
-          LEFT JOIN prices b ON a.product_id = b.product_id
-          ''')
 
-df = pd.DataFrame(c.fetchall(), columns=['product_name','price'])
-print (df)
+
+def initialize_table(table_name):
+    conn = sqlite3.connect("test.db")
+    c = conn.cursor()
+    
+    with conn:
+        c.execute(f"""CREATE TABLE IF NOT EXISTS {table_name} (
+        exam_name text,    
+        weightage real,
+        score_attained real,
+        score_max real
+        )""")
+    with conn:
+        c.execute(f"INSERT INTO {table_name} VALUES ('wa1', 0, 0, 0)")
+        c.execute(f"INSERT INTO {table_name} VALUES ('wa2', 0, 0, 0)")
+        c.execute(f"INSERT INTO {table_name} VALUES ('wa3', 0, 0, 0)")
+        c.execute(f"INSERT INTO {table_name} VALUES ('eoy', 0, 0, 0)")
+    
+
+def update_values(table_name, exam_name, weightage, score_attained, score_max):
+    conn = sqlite3.connect("test.db")
+    c = conn.cursor()
+    
+    with conn:
+        c.execute(f"UPDATE {table_name} SET weightage={weightage} WHERE exam_name='{exam_name}'")
+        c.execute(f"UPDATE {table_name} SET score_attained={score_attained} WHERE exam_name='{exam_name}'")
+        c.execute(f"UPDATE {table_name} SET score_max={score_max} WHERE exam_name='{exam_name}'")
+
+
+def get_stored_values(table_name):
+    conn = sqlite3.connect("test.db")
+    c = conn.cursor()
+
+    c.execute(f"SELECT * FROM {table_name}")
+    return c.fetchall()
