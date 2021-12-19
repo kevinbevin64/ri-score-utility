@@ -1,9 +1,13 @@
 import math as m
 
 
+import database
+
 
 class Exam():
-    def __init__(self, weightage=None, score_attained=None, score_max=None):
+    def __init__(self, subj_name, exam_name, weightage=0.0, score_attained=0.0, score_max=0.0):
+        self.subj_name = subj_name
+        self.exam_name = exam_name
         self.weightage = weightage
         self.score_attained = score_attained
         self.score_max = score_max
@@ -21,14 +25,15 @@ class Exam():
 
     def update_info(self, weightage, score_attained, score_max):
         if weightage > 0 and weightage < 100:
-            self.weightage = weightage
+            self.weightage = float(weightage)
         else:
             return "Weightage must be between 0 and 100"
 
-        if isinstance(weightage, int) and isinstance(score_max, int) and isinstance(score_attained, int) and score_attained >= 0 and score_max > 0 and score_attained <= score_max:
+        if score_attained >= 0 and score_max > 0 and score_attained <= score_max:
             self.score_attained = score_attained
             self.score_max = score_max
 
+        database.update_values(self.subj_name, self.exam_name, weightage, score_attained, score_max)
         return f"Weightage: {weightage}%, Attained: {score_attained}, Max: {score_max}"
 
     def get_exam_percentage(self):
@@ -55,19 +60,25 @@ class Final(Exam):
 
     def update_info(self, weightage, score_attained, score_max):
         if weightage > 0 and weightage < 100:
-            self.weightage = weightage
+            self.weightage = float(weightage)
         else:
             return "Weightage must be between 0 and 100"
-        if isinstance(score_max, int) and score_max > 0:
-            self.score_max = score_max
+
+
+        if score_max > 0 and score_attained <= score_max:
+            self.score_max = float(score_max)
+            self.score_attained = float(score_attained)
+
+        database.update_values(self.subj_name, self.exam_name, weightage, score_attained, score_max)
         return f"Weightage: {weightage}%, Attained: {score_attained}, Max: {score_max}"
 
 class Subject():
-    def __init__(self):
-        self.wa1 = Exam()
-        self.wa2 = Exam()
-        self.wa3 = Exam()
-        self.eoy = Final()
+    def __init__(self, name):
+        self.name = database.initialize_table(name)
+        self.wa1 = Exam(database.initialize_table(name), 'wa1')
+        self.wa2 = Exam(database.initialize_table(name), 'wa2')
+        self.wa3 = Exam(database.initialize_table(name), 'wa3')
+        self.eoy = Final(database.initialize_table(name), 'eoy')
         self.gpa_dict = {
             80: 4.0,
             70: 3.6,
@@ -75,6 +86,9 @@ class Subject():
             60: 2.8,
             55: 2.4,
             50: 2.0}
+
+
+
 
     def get_eoy_score_target(self):
         secured_percentage_points = self.wa1.weightage*(self.wa1.score_attained/self.wa1.score_max) + \
@@ -101,3 +115,16 @@ class Subject():
         for cutoff, gpa in self.gpa_dict.items():
             if percentage >= cutoff:
                 return gpa
+
+    def get_info(self):
+        return database.get_stored_values(self.name)
+
+
+math = Subject("math")
+# math.wa1.update_info(10,29,30)
+# math.wa2.update_info(10,19,30)
+# math.wa3.update_info(10,22,30)
+# math.eoy.update_info(70, 0, 100)
+
+# print(math.eoy.get_info())
+print(math.get_info())

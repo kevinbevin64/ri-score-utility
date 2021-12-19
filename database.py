@@ -8,16 +8,22 @@ def initialize_table(table_name):
     
     with conn:
         c.execute(f"""CREATE TABLE IF NOT EXISTS {table_name} (
-        exam_name text,    
+        exam_name text unique,    
         weightage real,
         score_attained real,
         score_max real
         )""")
-    with conn:
-        c.execute(f"INSERT INTO {table_name} VALUES ('wa1', 0, 0, 0)")
-        c.execute(f"INSERT INTO {table_name} VALUES ('wa2', 0, 0, 0)")
-        c.execute(f"INSERT INTO {table_name} VALUES ('wa3', 0, 0, 0)")
-        c.execute(f"INSERT INTO {table_name} VALUES ('eoy', 0, 0, 0)")
+    
+    try:
+        with conn:
+            c.execute(f"INSERT INTO {table_name} VALUES ('wa1', 0, 0, 0)")
+            c.execute(f"INSERT INTO {table_name} VALUES ('wa2', 0, 0, 0)")
+            c.execute(f"INSERT INTO {table_name} VALUES ('wa3', 0, 0, 0)")
+            c.execute(f"INSERT INTO {table_name} VALUES ('eoy', 0, 0, 0)")
+    except:
+        pass
+
+    return table_name
     
 
 def update_values(table_name, exam_name, weightage, score_attained, score_max):
