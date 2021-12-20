@@ -1,16 +1,24 @@
 import math as m
 
-
 import database
 
 
 class Exam():
-    def __init__(self, subj_name, exam_name, weightage=0.0, score_attained=0.0, score_max=0.0):
+    def __init__(self, subj_name, exam_name):
         self.subj_name = subj_name
         self.exam_name = exam_name
-        self.weightage = weightage
-        self.score_attained = score_attained
-        self.score_max = score_max
+        self.weightage = database.get_stored_values(subj_name)[list([database.get_stored_values(subj_name)[0][0],
+                                database.get_stored_values(subj_name)[1][0],
+                                database.get_stored_values(subj_name)[2][0],
+                                database.get_stored_values(subj_name)[3][0]]).index(exam_name)][1]
+        self.score_attained = database.get_stored_values(subj_name)[list([database.get_stored_values(subj_name)[0][0],
+                                database.get_stored_values(subj_name)[1][0],
+                                database.get_stored_values(subj_name)[2][0],
+                                database.get_stored_values(subj_name)[3][0]]).index(exam_name)][2]
+        self.score_max = database.get_stored_values(subj_name)[list([database.get_stored_values(subj_name)[0][0],
+                                database.get_stored_values(subj_name)[1][0],
+                                database.get_stored_values(subj_name)[2][0],
+                                database.get_stored_values(subj_name)[3][0]]).index(exam_name)][3]
         self.gpa_dict = {
             80: 4.0,
             70: 3.6,
@@ -88,8 +96,6 @@ class Subject():
             50: 2.0}
 
 
-
-
     def get_eoy_score_target(self):
         secured_percentage_points = self.wa1.weightage*(self.wa1.score_attained/self.wa1.score_max) + \
             self.wa2.weightage*(self.wa2.score_attained/self.wa2.score_max) + \
@@ -119,12 +125,5 @@ class Subject():
     def get_info(self):
         return database.get_stored_values(self.name)
 
-
 math = Subject("math")
-# math.wa1.update_info(10,29,30)
-# math.wa2.update_info(10,19,30)
-# math.wa3.update_info(10,22,30)
-# math.eoy.update_info(70, 0, 100)
-
-# print(math.eoy.get_info())
-print(math.get_info())
+print(math.get_eoy_score_target())

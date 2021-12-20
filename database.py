@@ -3,7 +3,7 @@ import sqlite3
 
 
 def initialize_table(table_name):
-    conn = sqlite3.connect("test.db")
+    conn = sqlite3.connect("subjects.db")
     c = conn.cursor()
     
     with conn:
@@ -27,7 +27,7 @@ def initialize_table(table_name):
     
 
 def update_values(table_name, exam_name, weightage, score_attained, score_max):
-    conn = sqlite3.connect("test.db")
+    conn = sqlite3.connect("subjects.db")
     c = conn.cursor()
     
     with conn:
@@ -37,7 +37,7 @@ def update_values(table_name, exam_name, weightage, score_attained, score_max):
 
 
 def get_stored_values(table_name):
-    conn = sqlite3.connect("test.db")
+    conn = sqlite3.connect("subjects.db")
     c = conn.cursor()
 
     c.execute(f"SELECT * FROM {table_name}")
