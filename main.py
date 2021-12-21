@@ -5,7 +5,7 @@ import database
 
 class Exam():
     def __init__(self, subj_name, exam_name):
-        self.subj_name = subj_name
+        self.subj_name = database.initialize_table(subj_name)
         self.exam_name = exam_name
         self.weightage = database.get_stored_values(subj_name)[list([database.get_stored_values(subj_name)[0][0],
                                 database.get_stored_values(subj_name)[1][0],
@@ -125,5 +125,32 @@ class Subject():
     def get_info(self):
         return database.get_stored_values(self.name)
 
-math = Subject("math")
-print(math.get_eoy_score_target())
+subj_list = ["english", "math", "mt", "history", "literature", "geography", "physics", "biology", "chemistry"]
+subs = {}
+for s in subj_list:
+    subs[s] = {"wa1":Exam(s, "wa1"), 
+                "wa2": Exam(s, "wa2"), 
+                "wa3": Exam(s, "wa3"), 
+                "eoy": Final(s, "eoy")}
+
+
+def get_subj_summary(subs_subject):
+    print(subs_subject["wa1"].get_info())
+
+def get_targ_score(subs_subject):
+    secured_percentage_points = subs_subject["wa1"].weightage*(subs_subject["wa1"].score_attained/subs_subject["wa1"].score_max) + \
+            subs_subject["wa2"].weightage*(subs_subject["wa2"].score_attained/subs_subject["wa2"].score_max) + \
+            subs_subject["wa3"].weightage*(subs_subject["wa3"].score_attained/subs_subject["wa3"].score_max)
+
+    target_dict = {}
+    for cutoff in subs_subject["wa1"].gpa_dict:
+            try:
+                target = ((float(cutoff)-secured_percentage_points)/subs_subject["eoy"].weightage)*subs_subject["eoy"].score_max
+                target_dict[m.ceil(target)] = subs_subject["wa1"].gpa_dict[cutoff]
+            except:
+                return "Check value type"
+
+    return target_dict
+
+tmp = "math"
+print(get_targ_score(subs[tmp]))
