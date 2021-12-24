@@ -15,10 +15,10 @@ for s in subj_list:
 root = Tk()
 
 subject = {
-    "wa1": [0,0,0,1],
-    "wa2": [0,0,0,2],
-    "wa3": [0,0,0,3],
-    "eoy": [0,0,0,4]
+    "wa1": [0,0,0,3],
+    "wa2": [0,0,0,4],
+    "wa3": [0,0,0,5],
+    "eoy": [0,0,0,6]
 }
 
 
@@ -43,9 +43,9 @@ def stat_entry(subj_name):
 
     print(get_targ_score(subs[subj_name]))
 
-    Label(root, text="Weightage").grid(row=0, column=2)
-    Label(root, text="Score_attained").grid(row=0, column=3)
-    Label(root, text="Score_max").grid(row=0, column=4)
+    Label(root, text="Weightage").grid(row=2, column=2)
+    Label(root, text="Score_attained").grid(row=2, column=3)
+    Label(root, text="Score_max").grid(row=2, column=4)
 
     identifier = "wa1"
     Label(root, text=identifier).grid(row=subject[identifier][-1], column=1)
@@ -75,7 +75,7 @@ def stat_entry(subj_name):
     Entry(root, textvariable=subject[identifier][2], width=8).grid(row=subject[identifier][-1], column=4)
     Button(root, text="save", command=lambda: subs[subj_name]["eoy"].update_info(float(subject["eoy"][0].get()), float(subject["eoy"][1].get()), float(subject["eoy"][2].get()))).grid(row=subject[identifier][-1], column=5)
 
-    Label(root, text="").grid(row=5, column=1)
+    Label(root, text="").grid(row=7, column=1)
 
     def target(subj_name):
         reverse = {v: k for k, v in get_targ_score(subs[subj_name]).items()}
@@ -85,22 +85,45 @@ def stat_entry(subj_name):
     
 
     options_list = []
-    for cutoff, gpa in subs["math"]["wa1"].gpa_dict.items():
+    for cutoff, gpa in subs[subj_name]["wa1"].gpa_dict.items():
         options_list.append(str(gpa))
 
     value_inside = StringVar()
     value_inside.set("Select an option")
 
     thingy = OptionMenu(root, value_inside, *options_list)
-    thingy.grid(row=6, column=1)
+    thingy.grid(row=8, column=1)
     my_label = Label(root, text="")
-    my_label.grid(row=6, column=3)
-    Button(root, text="get_eoy_score_target", command=lambda: target(subj_name)).grid(row=6, column=2)
+    my_label.grid(row=8, column=3)
+    Button(root, text="get_eoy_score_target", command=lambda: target(subj_name)).grid(row=8, column=2)
 
     
 
+def switcheroo(subject):
 
-stat_entry("math")
+    # Reset main window
+    for l in root.grid_slaves():
+        l.grid_forget()
+    
+    # Creae option menu
+    subj_option = StringVar()
+    subj_option.set("Select an option")
+    subjthingy = OptionMenu(root, subj_option, *subj_list)
+    subjthingy.grid(row=0, column=0)
+    
+    # Create button to confirm chosen subject
+    Button(root, text="switch", command=lambda: stat_entry(subj_option.get())).grid(row=0, column=1)
+    
+
+
+subj_option = StringVar()
+subj_option.set("Select an option")
+
+subjthingy = OptionMenu(root, subj_option, *subj_list)
+subjthingy.grid(row=0, column=0)
+Button(root, text="switch", command=lambda: stat_entry(subj_option.get())).grid(row=0, column=1)
+
+
 
 root.mainloop()
 

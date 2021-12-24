@@ -138,10 +138,12 @@ def get_subj_summary(subs_subject):
     print(subs_subject["wa1"].get_info())
 
 def get_targ_score(subs_subject):
-    secured_percentage_points = subs_subject["wa1"].weightage*(subs_subject["wa1"].score_attained/subs_subject["wa1"].score_max) + \
-            subs_subject["wa2"].weightage*(subs_subject["wa2"].score_attained/subs_subject["wa2"].score_max) + \
-            subs_subject["wa3"].weightage*(subs_subject["wa3"].score_attained/subs_subject["wa3"].score_max)
-
+    try:
+        secured_percentage_points = subs_subject["wa1"].weightage*(subs_subject["wa1"].score_attained/subs_subject["wa1"].score_max) + \
+                subs_subject["wa2"].weightage*(subs_subject["wa2"].score_attained/subs_subject["wa2"].score_max) + \
+                subs_subject["wa3"].weightage*(subs_subject["wa3"].score_attained/subs_subject["wa3"].score_max)
+    except:
+        print("Zero div")
     target_dict = {}
     for cutoff in subs_subject["wa1"].gpa_dict:
             try:
