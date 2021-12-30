@@ -100,5 +100,4 @@ def get_targ_score(subs_subject):
                 return "Check value type"
 
     return target_dict
-math = Exam("math", "wa1")
-math.update_info(10, 29, 30)
+

@@ -28,6 +28,17 @@ for subject in subject_list:
 def enter_scores(subject_name):
     r, c = 0, 0
 
+    selected_subject = StringVar()
+    selected_subject.set(subject_name)
+
+    def switch_subject(subject_name):
+        for widget in root.grid_slaves():
+            widget.destroy()
+        enter_scores(subject_name)
+
+    OptionMenu(root, selected_subject, *subject_list).grid(row=r+1, column=c+1)
+    Button(root, text="Switch", command=lambda: switch_subject(selected_subject.get())).grid(row=r+1, column=c+2)
+
     Label(root, text="Weightage / %").grid(row=r+2, column=c+2)
     Label(root, text="Score_attained").grid(row=r+2, column=c+3)
     Label(root, text="Score_max").grid(row=r+2, column=c+4)
@@ -35,17 +46,15 @@ def enter_scores(subject_name):
     exams = ["wa1", "wa2", "wa3", "eoy"]
     for exam in exams:
         Label(root, text=exam).grid(row=r+3, column=c+1)
-        Entry(root, textvariable=subject_dict[subject_name][exam]["weightage"]).grid(row=r+3, column=c+2)
-        Entry(root, textvariable=subject_dict[subject_name][exam]["score_attained"]).grid(row=r+3, column=c+3)
-        Entry(root, textvariable=subject_dict[subject_name][exam]["score_max"]).grid(row=r+3, column=c+4)
+        Entry(root, width=8, textvariable=subject_dict[subject_name][exam]["weightage"]).grid(row=r+3, column=c+2)
+        Entry(root, width=8, textvariable=subject_dict[subject_name][exam]["score_attained"]).grid(row=r+3, column=c+3)
+        Entry(root, width=8, textvariable=subject_dict[subject_name][exam]["score_max"]).grid(row=r+3, column=c+4)
         r += 1
     
     r = 0
     def save_values(subject_name):
         for exam in exams:
-            Exam(subject_name, exam).update_info(float(subject_dict[subject_name][exam]["weightage"].get()),
-                float(subject_dict[subject_name][exam]["score_attained"].get()),
-                float(subject_dict[subject_name][exam]["score_max"].get()))
+            Exam(subject_name, exam).update_info(float(subject_dict[subject_name][exam]["weightage"].get()),float(subject_dict[subject_name][exam]["score_attained"].get()),float(subject_dict[subject_name][exam]["score_max"].get()))
         print(Exam(subject_name, "wa1").get_info())
         print(Exam(subject_name, "wa2").get_info())
         print(Exam(subject_name, "wa3").get_info())
@@ -80,13 +89,12 @@ def enter_scores(subject_name):
     for cutoff, gpa in Exam(subject_name, "wa1").gpa_dict.items():
         gpa_list.append(str(gpa))
     selected_gpa = StringVar()
-    selected_gpa.set("Select an option")
+    selected_gpa.set(gpa_list[0])
     OptionMenu(root, selected_gpa, *gpa_list).grid(row=r+8, column=c+1)
     Button(root, text="get_eoy_score_target", command=lambda: print_score_target(subject_name)).grid(row=r+8, column=c+2)
     eoy_targ_result = Label(root, text="")
     eoy_targ_result.grid(row=r+8, column=c+3)
 
-
-enter_scores("math")
+enter_scores(subject_list[0])
 
 root.mainloop()
