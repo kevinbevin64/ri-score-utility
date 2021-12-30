@@ -1,93 +1,100 @@
 from tkinter import *
 from tkmacosx import *
 
-from main import Subject
+import math as m
 
-math = Subject("math")
+from main import Exam, Final
+from main import get_targ_score
+
+# Create Root window
 root = Tk()
-
-subject = {
-    "wa1": [0,0,0,1],
-    "wa2": [0,0,0,2],
-    "wa3": [0,0,0,3],
-    "eoy": [0,0,0,4]
-}
-
-
-for exam, var_list in subject.items():
-    subject[exam][0]= StringVar()
-    subject[exam][1]= StringVar()
-    subject[exam][2]= StringVar()
-
-my_list = [0]
-my_list[0] = StringVar()
-
-
 root.title("ri-score-utility")
-root.geometry("500x500")
+
+# Create dictionary of subjects
+subject_list = ["english", "math", "mt", "history", "literature", "geography", "physics", "biology", "chemistry"]
+subject_dict = {}
+for subject in subject_list:
+    subject_dict[subject] = {"wa1":{"weightage":StringVar(), "score_attained":StringVar(), "score_max":StringVar()}, 
+                "wa2": {"weightage":StringVar(), "score_attained":StringVar(), "score_max":StringVar()}, 
+                "wa3": {"weightage":StringVar(), "score_attained":StringVar(), "score_max":StringVar()}, 
+                "eoy": {"weightage":StringVar(), "score_attained":StringVar(), "score_max":StringVar()}}
+
+    for exam in list(["wa1", "wa2", "wa3", "eoy"]):
+        subject_dict[subject][exam]["weightage"].set(str(Exam(subject, exam).weightage))
+        subject_dict[subject][exam]["score_attained"].set(str(Exam(subject, exam).score_attained))
+        subject_dict[subject][exam]["score_max"].set(str(Exam(subject, exam).score_max))
 
 
+def enter_scores(subject_name):
+    r, c = 0, 0
 
+    selected_subject = StringVar()
+    selected_subject.set(subject_name)
 
-def stat_entry():
+    def switch_subject(subject_name):
+        for widget in root.grid_slaves():
+            widget.destroy()
+        enter_scores(subject_name)
 
-    Label(root, text="Weightage").grid(row=0, column=2)
-    Label(root, text="Score_attained").grid(row=0, column=3)
-    Label(root, text="Score_max").grid(row=0, column=4)
+    OptionMenu(root, selected_subject, *subject_list).grid(row=r+1, column=c+1)
+    Button(root, text="Switch", command=lambda: switch_subject(selected_subject.get())).grid(row=r+1, column=c+2)
 
-    identifier = "wa1"
-    Label(root, text=identifier).grid(row=subject[identifier][-1], column=1)
-    Entry(root, textvariable=subject[identifier][0], width=8).grid(row=subject[identifier][-1], column=2)
-    Entry(root, textvariable=subject[identifier][1], width=8).grid(row=subject[identifier][-1], column=3)
-    Entry(root, textvariable=subject[identifier][2], width=8).grid(row=subject[identifier][-1], column=4)
-    Button(root, text="save", command=lambda: math.wa1.update_info(float(subject["wa1"][0].get()), float(subject["wa1"][1].get()), float(subject["wa1"][2].get()))).grid(row=subject[identifier][-1], column=5)
+    Label(root, text="Weightage / %").grid(row=r+2, column=c+2)
+    Label(root, text="Score_attained").grid(row=r+2, column=c+3)
+    Label(root, text="Score_max").grid(row=r+2, column=c+4)
 
-    identifier = "wa2"
-    Label(root, text=identifier).grid(row=subject[identifier][-1], column=1)
-    Entry(root, textvariable=subject[identifier][0], width=8).grid(row=subject[identifier][-1], column=2)
-    Entry(root, textvariable=subject[identifier][1], width=8).grid(row=subject[identifier][-1], column=3)
-    Entry(root, textvariable=subject[identifier][2], width=8).grid(row=subject[identifier][-1], column=4)
-    Button(root, text="save", command=lambda: math.wa2.update_info(float(subject["wa2"][0].get()), float(subject["wa2"][1].get()), float(subject["wa2"][2].get()))).grid(row=subject[identifier][-1], column=5)
+    exams = ["wa1", "wa2", "wa3", "eoy"]
+    for exam in exams:
+        Label(root, text=exam).grid(row=r+3, column=c+1)
+        Entry(root, width=8, textvariable=subject_dict[subject_name][exam]["weightage"]).grid(row=r+3, column=c+2)
+        Entry(root, width=8, textvariable=subject_dict[subject_name][exam]["score_attained"]).grid(row=r+3, column=c+3)
+        Entry(root, width=8, textvariable=subject_dict[subject_name][exam]["score_max"]).grid(row=r+3, column=c+4)
+        r += 1
+    
+    r = 0
+    def save_values(subject_name):
+        for exam in exams:
+            Exam(subject_name, exam).update_info(float(subject_dict[subject_name][exam]["weightage"].get()),float(subject_dict[subject_name][exam]["score_attained"].get()),float(subject_dict[subject_name][exam]["score_max"].get()))
+        print(Exam(subject_name, "wa1").get_info())
+        print(Exam(subject_name, "wa2").get_info())
+        print(Exam(subject_name, "wa3").get_info())
+        print(Exam(subject_name, "eoy").get_info())
 
-    identifier = "wa3"
-    Label(root, text=identifier).grid(row=subject[identifier][-1], column=1)
-    Entry(root, textvariable=subject[identifier][0], width=8).grid(row=subject[identifier][-1], column=2)
-    Entry(root, textvariable=subject[identifier][1], width=8).grid(row=subject[identifier][-1], column=3)
-    Entry(root, textvariable=subject[identifier][2], width=8).grid(row=subject[identifier][-1], column=4)
-    Button(root, text="save", command=lambda: math.wa3.update_info(float(subject["wa3"][0].get()), float(subject["wa3"][1].get()), float(subject["wa3"][2].get()))).grid(row=subject[identifier][-1], column=5)
+    Button(root, text="Save", command=lambda: save_values(subject_name)).grid(row=r+6, column=c+5)
+    
+    Label(root, text="").grid(row=r+7, column=c+1)
 
-    identifier = "eoy"
-    Label(root, text=identifier).grid(row=subject[identifier][-1], column=1)
-    Entry(root, textvariable=subject[identifier][0], width=8).grid(row=subject[identifier][-1], column=2)
-    Entry(root, textvariable=subject[identifier][1], width=8).grid(row=subject[identifier][-1], column=3)
-    Entry(root, textvariable=subject[identifier][2], width=8).grid(row=subject[identifier][-1], column=4)
-    Button(root, text="save", command=lambda: math.eoy.update_info(float(subject["eoy"][0].get()), float(subject["eoy"][1].get()), float(subject["eoy"][2].get()))).grid(row=subject[identifier][-1], column=5)
+    def print_score_target(subject_name):
+        try:
+            points_claimed = Exam(subject_name, "wa1").weightage*(Exam(subject_name, "wa1").score_attained/Exam(subject_name, "wa1").score_max) + \
+                    Exam(subject_name, "wa2").weightage*(Exam(subject_name, "wa2").score_attained/Exam(subject_name, "wa2").score_max) + \
+                    Exam(subject_name, "wa3").weightage*(Exam(subject_name, "wa3").score_attained/Exam(subject_name, "wa3").score_max)
+        except:
+            print("Failed")
 
-    Label(root, text="").grid(row=5, column=1)
+        target_dict = {}
+        for cutoff in Exam(subject_name, "wa1").gpa_dict:
+            try:
+                target = ((float(cutoff)-points_claimed)/Exam(subject_name, "eoy").weightage)*Exam(subject_name, "eoy").score_max
+                target_dict[m.ceil(target)] = Exam(subject_name, "wa1").gpa_dict[cutoff]
+            except:
+                print("filaed")
 
-    def target():
-        reverse = {v: k for k, v in math.get_eoy_score_target().items()}
+        reversed_target_dict = {v: k for k, v in target_dict.items()}
         
-        value = reverse[float(value_inside.get())]
-        my_label.config(text=str(value))
+        value = reversed_target_dict[float(selected_gpa.get())]
+        eoy_targ_result.config(text=str(value))
     
+    gpa_list = []
+    for cutoff, gpa in Exam(subject_name, "wa1").gpa_dict.items():
+        gpa_list.append(str(gpa))
+    selected_gpa = StringVar()
+    selected_gpa.set(gpa_list[0])
+    OptionMenu(root, selected_gpa, *gpa_list).grid(row=r+8, column=c+1)
+    Button(root, text="get_eoy_score_target", command=lambda: print_score_target(subject_name)).grid(row=r+8, column=c+2)
+    eoy_targ_result = Label(root, text="")
+    eoy_targ_result.grid(row=r+8, column=c+3)
 
-    options_list = []
-    for cutoff, gpa in math.gpa_dict.items():
-        options_list.append(str(gpa))
-
-    value_inside = StringVar()
-    value_inside.set("Select an option")
-
-    thingy = OptionMenu(root, value_inside, *options_list)
-    thingy.grid(row=6, column=1)
-    my_label = Label(root, text="")
-    my_label.grid(row=6, column=3)
-    Button(root, text="get_eoy_score_target", command=lambda: target()).grid(row=6, column=2)
-
-    
-
-
-stat_entry()
+enter_scores(subject_list[0])
 
 root.mainloop()
