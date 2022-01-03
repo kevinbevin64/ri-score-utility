@@ -6,7 +6,7 @@
 2. Uncompress the download.
 3. Open the folder and double-click "gui".
 
-### If you get an error afer step 3
+### If you get an error after step 3
 #### On Mac
 - If you get '"gui.app" cannot be opened because the developer cannot be verified', go to System Preferences, Security & Privacy, General, click "Open Anyway"
 #### On Windows
