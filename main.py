@@ -27,10 +27,6 @@ class Exam():
             55: 2.4,
             50: 2.0}
 
-
-    def get_info(self):
-        return f"Weightage: {self.weightage}%, Attained: {self.score_attained}, Max: {self.score_max}"
-
     def update_info(self, weightage, score_attained, score_max):
         if weightage > 0 and weightage < 100:
             self.weightage = float(weightage)
@@ -43,61 +39,4 @@ class Exam():
 
         database.update_values(self.subj_name, self.exam_name, weightage, score_attained, score_max)
         return f"Weightage: {weightage}%, Attained: {score_attained}, Max: {score_max}"
-
-    def get_exam_percentage(self):
-        return (self.score_attained/self.score_max) * 100
-
-    def get_exam_gpa(self):
-        percentage = (self.score_attained/self.score_max) * 100
-        for cutoff, gpa in self.gpa_dict.items():
-            if percentage >= cutoff:
-                return gpa
-
-    def get_score_target(self):
-        target_dict = {}
-        for cutoff in self.gpa_dict:
-            target_dict[m.ceil((self.score_max*cutoff)/100)] = self.gpa_dict[cutoff]
-        return target_dict
-
-    def get_obj_type(self):
-        return type(self).__name__
-
-
-class Final(Exam):
-    pass
-
-    def update_info(self, weightage, score_attained, score_max):
-        if weightage > 0 and weightage < 100:
-            self.weightage = float(weightage)
-        else:
-            return "Weightage must be between 0 and 100"
-
-
-        if score_max > 0 and score_attained <= score_max:
-            self.score_max = float(score_max)
-            self.score_attained = float(score_attained)
-
-        database.update_values(self.subj_name, self.exam_name, weightage, score_attained, score_max)
-        return f"Weightage: {weightage}%, Attained: {score_attained}, Max: {score_max}"
-
-
-def get_subj_summary(subs_subject):
-    print(subs_subject["wa1"].get_info())
-
-def get_targ_score(subs_subject):
-    try:
-        secured_percentage_points = subs_subject["wa1"].weightage*(subs_subject["wa1"].score_attained/subs_subject["wa1"].score_max) + \
-                subs_subject["wa2"].weightage*(subs_subject["wa2"].score_attained/subs_subject["wa2"].score_max) + \
-                subs_subject["wa3"].weightage*(subs_subject["wa3"].score_attained/subs_subject["wa3"].score_max)
-    except:
-        print("Zero div")
-    target_dict = {}
-    for cutoff in subs_subject["wa1"].gpa_dict:
-            try:
-                target = ((float(cutoff)-secured_percentage_points)/subs_subject["eoy"].weightage)*subs_subject["eoy"].score_max
-                target_dict[m.ceil(target)] = subs_subject["wa1"].gpa_dict[cutoff]
-            except:
-                return "Check value type"
-
-    return target_dict
 

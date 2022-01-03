@@ -3,8 +3,8 @@ from tkmacosx import *
 
 import math as m
 
-from main import Exam, Final
-from main import get_targ_score
+from main import Exam
+
 
 # Create Root window
 root = Tk()
@@ -42,6 +42,9 @@ def enter_scores(subject_name):
     Label(root, text="Weightage / %").grid(row=r+2, column=c+2)
     Label(root, text="Score_attained").grid(row=r+2, column=c+3)
     Label(root, text="Score_max").grid(row=r+2, column=c+4)
+    Label(root, text="Test_percentage").grid(row=r+2, column=c+5)
+    Label(root, text="Test_gpa").grid(row=r+2, column=c+6)
+
 
     exams = ["wa1", "wa2", "wa3", "eoy"]
     for exam in exams:
@@ -52,15 +55,18 @@ def enter_scores(subject_name):
         r += 1
     
     r = 0
+
+    # subject_info = {}
+    # for exam in list(["wa1", "wa2", "wa3", "eoy"]):
+    #     subject_info[exam] = 
+
+
+
     def save_values(subject_name):
         for exam in exams:
             Exam(subject_name, exam).update_info(float(subject_dict[subject_name][exam]["weightage"].get()),float(subject_dict[subject_name][exam]["score_attained"].get()),float(subject_dict[subject_name][exam]["score_max"].get()))
-        print(Exam(subject_name, "wa1").get_info())
-        print(Exam(subject_name, "wa2").get_info())
-        print(Exam(subject_name, "wa3").get_info())
-        print(Exam(subject_name, "eoy").get_info())
-
-    Button(root, text="Save", command=lambda: save_values(subject_name)).grid(row=r+6, column=c+5)
+        
+    Button(root, text="Save", command=lambda: save_values(subject_name)).grid(row=r+6, column=c+6)
     
     Label(root, text="").grid(row=r+7, column=c+1)
 
